@@ -1,0 +1,23 @@
+name: kemal-graphql
+version: 0.1.0
+
+authors:
+- ziprandom - <ziprandom@gmail.com>
+
+targets:
+  kemal-graphql:
+    main: src/kemal-graphql.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    branch: master
+  spec-kemal:
+    github: kemalcr/spec-kemal
+    branch: master
+  graphql-crystal:
+    github: ziprandom/graphql-crystal
+
+crystal: 0.22.0
+
+license: MIT
