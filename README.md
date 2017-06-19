@@ -52,4 +52,5 @@ crystal spec
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name])  - creator, maintainer
+- [[ziprandom]](https://github.com/[zoiprandom])  - creator, maintainer
+- [[Facebook GraphQL]](https://github.com/graphql) - creator of graphiql
