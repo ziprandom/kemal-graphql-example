@@ -32,6 +32,8 @@ or run it directly with (use the release flag to see the best performance)
 crystal run [--release] src/kemal-graphql.cr
 ```
 
+now you can open up a browser and go to [http://localhost:3000/index.html] to explore the graphql schema.
+
 ## Development
 
 run specs with
