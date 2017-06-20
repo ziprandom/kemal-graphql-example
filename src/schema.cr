@@ -145,7 +145,7 @@ SCHEMA_STRING = <<-graphql_schema
     # users last name
     lastName: String!
     # full name string for the user
-    fullName: String!
+    fullName: String! @deprecated(reason: "no need to construct this serverside..")
     # users role
     role: UserRole!
     # posts published
