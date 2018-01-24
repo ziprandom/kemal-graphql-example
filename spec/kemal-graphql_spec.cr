@@ -31,4 +31,13 @@ describe Kemal::GraphQL do
     response.body.should eq "{\"data\":{\"comment\":{\"body\":\"would be the most wonderful thing\"}}}"
   end
 
+  it "passes the username header down to the callback" do
+    body = {"query" => query_string, "variables" => payload}.to_json
+    post("/graphql", headers: HTTP::Headers{"Content-Type" => "application/json", "USERNAME" => "tom"}, body: body)
+    response.body.should eq "{\"data\":{\"comment\":{\"body\":\"would be the most wonderful thing\"}}}"
+
+    post("/graphql", headers: HTTP::Headers{"Content-Type" => "application/json", "USERNAME" => "ada"}, body: body)
+    response.body.should eq "{\"data\":{\"comment\":{\"body\":\"would be the most wonderful thing\"}}}"
+
+  end
 end

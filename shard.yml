@@ -17,7 +17,6 @@ dependencies:
     branch: master
   graphql-crystal:
     github: ziprandom/graphql-crystal
-
-crystal: 0.22.0
+    branch: master
 
 license: MIT

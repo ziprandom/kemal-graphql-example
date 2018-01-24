@@ -1,9 +1,22 @@
 require "kemal"
 require "json"
 require "./schema"
+require "graphql-crystal"
 require "./hello_world_schema"
 
 module Kemal::GraphQL
+
+  class AppContext < ::GraphQL::Schema::Context
+
+    def initialize(@username : String, *rest)
+      super(*rest)
+    end
+
+    def username
+      @username
+    end
+
+  end
 
   private def self.extract_graphql_payload(type : Symbol, env)
     case type
@@ -16,8 +29,11 @@ module Kemal::GraphQL
       query_string = payload["query"].as(String)
       query_params = payload["variables"]?.as Hash(String, JSON::Type)?
     end
+    context = AppContext.new(
+      env.request.headers["USERNAME"]? || "anonymous", Kemal::GraphQL::SCHEMA, 10
+    )
     raise "no query provided!" unless query_string
-    { query_string, query_params }
+    { query_string, query_params, nil, context }
   end
 
   #

@@ -1,6 +1,6 @@
 # coding: utf-8
 require "graphql-crystal"
-require "secure_random"
+require "uuid"
 
 module Kemal::GraphQL
 
@@ -48,21 +48,21 @@ end
 # and create some fixtures to work with
 #
 USERS = [
-  {id: SecureRandom.uuid, first_name: "Bob", last_name: "Bobson", role: UserRole::Author},
-  {id: SecureRandom.uuid, first_name: "Alice", last_name: "Alicen", role: UserRole::Admin},
-  {id: SecureRandom.uuid, first_name: "Grace", last_name: "Graham", role: UserRole::Reader}
+  {id: UUID.random.to_s, first_name: "Bob", last_name: "Bobson", role: UserRole::Author},
+  {id: UUID.random.to_s, first_name: "Alice", last_name: "Alicen", role: UserRole::Admin},
+  {id: UUID.random.to_s, first_name: "Grace", last_name: "Graham", role: UserRole::Reader}
 ].map { |args| User.new **args }
 
 POSTS = [
-  {id: SecureRandom.uuid, author: USERS[0], title: "GraphQL for Dummies", body: "GraphQL is pretty simple."},
-  {id: SecureRandom.uuid, author: USERS[0], title: "REST vs. GraphQL", body: "GraphQL has certain advantages over REST."},
-  {id: SecureRandom.uuid, author: USERS[1], title: "The Crystal Programming Language ", body: "The nicest syntax on the planet now comes with typesafety, performance and parallelisation support(ójala!)"}
+  {id: UUID.random.to_s, author: USERS[0], title: "GraphQL for Dummies", body: "GraphQL is pretty simple."},
+  {id: UUID.random.to_s, author: USERS[0], title: "REST vs. GraphQL", body: "GraphQL has certain advantages over REST."},
+  {id: UUID.random.to_s, author: USERS[1], title: "The Crystal Programming Language ", body: "The nicest syntax on the planet now comes with typesafety, performance and parallelisation support(ójala!)"}
 ].map { |args| Post.new **args }
 
 COMMENTS = [
-  {id: SecureRandom.uuid, author: USERS[2], post: POSTS[1], body: "I like rest more!"},
-  {id: SecureRandom.uuid, author: USERS[2], post: POSTS[1], body: "But think of all the possibilities with GraphQL!"},
-  {id: SecureRandom.uuid, author: USERS[1], post: POSTS[2], body: "When will I finally have static compilation support?"}
+  {id: UUID.random.to_s, author: USERS[2], post: POSTS[1], body: "I like rest more!"},
+  {id: UUID.random.to_s, author: USERS[2], post: POSTS[1], body: "But think of all the possibilities with GraphQL!"},
+  {id: UUID.random.to_s, author: USERS[1], post: POSTS[2], body: "When will I finally have static compilation support?"}
 ].map { |args| Comment.new **args }
 
 
@@ -226,30 +226,35 @@ class User
   field :role
 end
 
-#
-# finally we define the top level resolve callbacks
-# for the root Queries fields and the root mutation fields
-#
-SCHEMA.resolve do
 
-  query "posts" { POSTS }
+module QueryType
+  include ::GraphQL::ObjectType
+  extend self
 
-  query "user" do |args|
+  field :posts { POSTS }
+
+  field :user do |args|
     USERS.find( &.id.==(args["id"]) )
   end
 
-  query "post" do |args|
+  field :post do |args|
     POSTS.find( &.id.==(args["id"]) )
   end
 
-  mutation "post" do |args|
+end
+
+module MutationType
+  include ::GraphQL::ObjectType
+  extend self
+
+  field :post do |args|
     payload = args["payload"].as(Hash)
 
     author = USERS.find( &.id.==(payload["authorId"]) )
     raise "authorId doesn't exist!" unless author
 
     post = Post.new(
-      id: SecureRandom.uuid, author: author,
+      id: UUID.random.to_s, author: author,
       title: payload["title"].as(String), body: payload["body"].as(String)
     )
 
@@ -257,7 +262,12 @@ SCHEMA.resolve do
     post
   end
 
-  mutation "comment" do |args|
+  field :comment do |args|
+
+    #    if username == "tom"
+    #      raise "tom, you are not allowed to post!"
+    #    end
+
     payload = args["payload"].as(Hash)
 
     author = USERS.find( &.id.==(payload["authorId"]) )
@@ -267,7 +277,7 @@ SCHEMA.resolve do
     raise "postId doesn't exist!" unless post
 
     comment = Comment.new(
-      id: SecureRandom.uuid, author: author,
+      id: UUID.random.to_s, author: author,
       post: post, body: payload["body"].as(String)
     )
     COMMENTS << comment
@@ -275,4 +285,11 @@ SCHEMA.resolve do
   end
 
 end
+
+#
+# finally we define the top level resolve callbacks
+# for the root Queries fields and the root mutation fields
+#
+SCHEMA.query_resolver = QueryType
+SCHEMA.mutation_resolver = MutationType
 end
