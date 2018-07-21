@@ -52,5 +52,5 @@ KEMAL_ENV=test crystal spec
 
 ## Contributors
 
-- [[ziprandom]](https://github.com/[zoiprandom])  - creator, maintainer
+- [[ziprandom]](https://github.com/ziprandom)  - creator, maintainer
 - [[Facebook GraphQL]](https://github.com/graphql) - creator of graphiql
