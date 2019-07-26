@@ -27,7 +27,7 @@ module Kemal::GraphQL
     when :json
       payload = env.params.json
       query_string = payload["query"].as(String)
-      query_params = payload["variables"]?.as Hash(String, JSON::Type)?
+      query_params = payload["variables"]?.as Hash(String, JSON::Any)?
     end
     context = AppContext.new(
       env.request.headers["USERNAME"]? || "anonymous", Kemal::GraphQL::SCHEMA, 10
