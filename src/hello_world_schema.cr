@@ -1,6 +1,12 @@
 require "graphql-crystal"
 
 module Kemal::GraphQL
+  module RootQuery
+    include ::GraphQL::ObjectType
+    extend self
+    field "hello" { "world" }
+  end
+
   HELLO_WORLD_SCHEMA = ::GraphQL::Schema.from_schema(
     %{
       schema {
@@ -11,7 +17,6 @@ module Kemal::GraphQL
         hello: String
       }
     }
-  ).resolve do
-    query "hello" { "world" }
-  end
+  )
+  HELLO_WORLD_SCHEMA.query_resolver = RootQuery
 end
